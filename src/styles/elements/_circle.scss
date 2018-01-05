@@ -1,0 +1,20 @@
+.circle {
+
+  fill: #FF0000;
+
+  cursor: move; /* fallback if grab cursor is unsupported */
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+
+}
+
+.circle-active {
+  @extend .circle;
+  stroke: #000;
+  stroke-width: 3px;
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+}
+
