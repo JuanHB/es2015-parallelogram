@@ -67,18 +67,21 @@ class Circle {
                 .attr("x", this.textPosCorrection.x)
                 .attr("y", this.textPosCorrection.y);
 
+            this.updateTextValue();
             this.setGroupTranslate([this.x, this.y]);
+
         };
 
         let dragMove = () => {
 
             this.x += d3.event.dx;
             this.y += d3.event.dy;
-            this.setGroupTranslate([this.x, this.y]);
-
-            group.dispatch("circle-group-drag", { detail : this } );
 
             this.updateTextValue();
+            this.setGroupTranslate([this.x, this.y]);
+
+
+            group.dispatch("circle-group-drag", { detail : this } );
         };
 
         let dragEnd = () =>{

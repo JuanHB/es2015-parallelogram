@@ -33144,18 +33144,21 @@ class Circle {
                 .attr("x", this.textPosCorrection.x)
                 .attr("y", this.textPosCorrection.y);
 
+            this.updateTextValue();
             this.setGroupTranslate([this.x, this.y]);
+
         };
 
         let dragMove = () => {
 
             this.x += __WEBPACK_IMPORTED_MODULE_0_d3__["b" /* event */].dx;
             this.y += __WEBPACK_IMPORTED_MODULE_0_d3__["b" /* event */].dy;
-            this.setGroupTranslate([this.x, this.y]);
-
-            group.dispatch("circle-group-drag", { detail : this } );
 
             this.updateTextValue();
+            this.setGroupTranslate([this.x, this.y]);
+
+
+            group.dispatch("circle-group-drag", { detail : this } );
         };
 
         let dragEnd = () =>{
