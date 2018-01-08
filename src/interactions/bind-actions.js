@@ -3,90 +3,102 @@ import { Circle, Path } from './elements';
 
 const bindActions = () => {
 
-    let d3MainSvgElem = d3.select("svg#main-svg");
-
-    let circles = [];
-    let circleRadius = 11;
-    let newCircle, lastCircle, lastPath, newPath;
+    let d3MainSvgElem = d3.select("svg#main-svg"),
+        _circles = [],
+        _circleRadius = 11,
+        _newCircle, _lastCircle, _lastPath, _newPath;
 
     function createCircleOnClick() {
 
-        let cx = d3.event.offsetX,
-            cy = d3.event.offsetY,
-            target = d3.select(d3.event.target);
+        let target = d3.select(d3.event.target);
 
-        if( target.attr('id') === 'main-svg' && circles.length < 3 ){
+        if( target.attr('id') === 'main-svg' && _circles.length < 3){
 
-            let circle = new Circle( cx, cy, circleRadius, d3MainSvgElem, circles.length );
-            circles.push(circle);
+            doCircleCreation();
 
-            lastCircle = newCircle;
-            newCircle = circle;
+            if(_circles.length === 3){
 
-            if(lastCircle){
+                let vertexA = _circles[0],
+                    vertexB = _circles[1],
+                    vertexC = _circles[2];
 
-                let pathCoords = [
-                    "M" + lastCircle.x, lastCircle.y,
-                    "L" + newCircle.x, newCircle.y,
-                    "Z"
-                ].join(" ");
+                let oppositeSumX = vertexA.x + vertexC.x,
+                    oppositeSumY = vertexA.y + vertexC.y;
 
-                lastPath = newPath;
-                newPath = new Path(pathCoords, d3MainSvgElem);
+                let vertexD = {
+                    x : oppositeSumX - vertexB.x,
+                    y : oppositeSumY - vertexB.y
+                };
 
-
-                lastCircle.paths.push(newPath);
-                newCircle.paths.push(newPath);
-
-                newPath.circles.push(lastCircle, newCircle)
+                doCircleCreation(vertexD.x, vertexD.y);
 
             }
+        }
 
-            console.log(lastCircle, newCircle);
-            console.log(lastPath, newPath);
+        function doCircleCreation(cx, cy){
 
+            cx = cx || d3.event.offsetX;
+            cy = cy || d3.event.offsetY;
 
-            /*let firstCircle  = circles[0],
-                secondCircle = circles[1],
-                thirdCircle  = circles[2];
+            let circle = new Circle( cx, cy, _circleRadius, d3MainSvgElem);
+            _circles.push(circle);
 
-            if(secondCircle){
+            _lastCircle = _newCircle;
+            _newCircle = circle;
+
+            if(_lastCircle){
 
                 let pathCoords = [
-                    "M" + firstCircle.x, firstCircle.y,
-                    "L" + secondCircle.x, secondCircle.y,
+                    "M" + _lastCircle.x, _lastCircle.y,
+                    "L" + _newCircle.x, _newCircle.y,
                     "Z"
                 ].join(" ");
 
-                let path = new Path(pathCoords, d3MainSvgElem);
+                _lastPath = _newPath;
+                _newPath = new Path(pathCoords, d3MainSvgElem);
 
-                firstCircle.paths.push(path);
-                secondCircle.paths.push(path);
+                _lastCircle.paths.push(_newPath);
+                _newCircle.paths.push(_newPath);
 
-                path.circles.push(firstCircle, secondCircle)
+                _newPath.circles.push(_lastCircle, _newCircle);
 
+                if(_circles.length === 4){
+
+                    let vertexA = _circles[0];
+
+                    let pathCoords = [
+                        "M" + _newCircle.x, _newCircle.y,
+                        "L" + vertexA.x, vertexA.y,
+                        "Z"
+                    ].join(" ");
+
+                    _lastPath = _newPath;
+                    _newPath = new Path(pathCoords, d3MainSvgElem);
+
+                    _newPath.circles.push(_newCircle, vertexA);
+                    vertexA.paths.push(_newPath);
+                    _newCircle.paths.push(_newPath);
+                }
             }
-
-            if(thirdCircle){
-
-                let pathCoords = [
-                    "M" + secondCircle.x, secondCircle.y,
-                    "L" + thirdCircle.x, thirdCircle.y,
-                    "Z"
-                ].join(" ");
-
-                let path = new Path(pathCoords, d3MainSvgElem);
-
-            }*/
-
-            circle.elements.group.on("circle-group-drag", updatePathCoords);
+            circle.elements.group.on("circle-group-drag", updatePathCoordsOnCircleDrag);
         }
 
     }
 
-    function updatePathCoords(){
+    function updatePathCoordsOnCircleDrag(){
+
         let eventCircle = d3.event.detail;
-        console.log(eventCircle)
+
+        eventCircle.paths.forEach((path) => {
+            let pathCircles = path.circles;
+            let newPathCoords = [
+                "M" + pathCircles[0].x, pathCircles[0].y,
+                "L" + pathCircles[1].x, pathCircles[1].y,
+                "Z"
+            ].join(" ");
+            path.updatePathCoords(newPathCoords);
+        });
+
     }
 
     d3MainSvgElem

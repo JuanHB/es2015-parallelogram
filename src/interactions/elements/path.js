@@ -1,5 +1,3 @@
-import * as d3 from 'd3';
-
 class Path {
 
     constructor(pathCoords, svgElem){
@@ -24,6 +22,11 @@ class Path {
             .attr("class", "path")
             .attr("d", this.pathCoords);
 
+    }
+
+    updatePathCoords(pathCoords){
+        this.pathCoords = pathCoords;
+        this.elements.path.attr("d", this.pathCoords);
     }
 
     static generateHex() {

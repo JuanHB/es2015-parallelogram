@@ -2,15 +2,13 @@ import * as d3 from 'd3';
 
 class Circle {
 
-    constructor(x, y, r, svgElem, order){
+    constructor(x, y, r, svgElem){
 
         this.r = r;
         this.x = x;
         this.y = y;
 
         this.svgElem = svgElem;
-        this.order = order;
-
 
         this.id = this.constructor.generateHex();
         this.paths = [];
@@ -18,7 +16,6 @@ class Circle {
             group : null, circle : null, text : null
         };
         this.textPosCorrection = { x : 0, y : -20 };
-
         this.create();
 
     }
@@ -46,7 +43,6 @@ class Circle {
             .attr("y", this.y + this.textPosCorrection.y);
 
         this.updateTextValue();
-
         this.bindGroupDrag();
 
     }
@@ -109,9 +105,8 @@ class Circle {
 
     setGroupTranslate(positionArray){
 
-        let group = this.elements.group;
-        let translateString = positionArray ? "translate("+positionArray+")" : null;
-
+        let group = this.elements.group,
+            translateString = positionArray ? "translate("+positionArray+")" : null;
         group
             .attr("transform", translateString);
 
