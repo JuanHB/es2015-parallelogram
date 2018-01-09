@@ -1,10 +1,10 @@
 import * as d3 from 'd3';
-import { Circle, Path } from './elements';
+import { Circle, Path } from '../elements';
+import State from '../state';
 
-const bindActions = () => {
+const bindInteractions = () => {
 
     let d3MainSvgElem = d3.select("svg#main-svg"),
-        _circles = [],
         _circleRadius = 11,
         _newCircle, _lastCircle, _lastPath, _newPath;
 
@@ -12,15 +12,15 @@ const bindActions = () => {
 
         let target = d3.select(d3.event.target);
 
-        if( target.attr('id') === 'main-svg' && _circles.length < 3){
+        if( target.attr('id') === 'main-svg' && State.circles.length < 3){
 
             doCircleCreation();
 
-            if(_circles.length === 3){
+            if(State.circles.length === 3){
 
-                let vertexA = _circles[0],
-                    vertexB = _circles[1],
-                    vertexC = _circles[2];
+                let vertexA = State.circles[0],
+                    vertexB = State.circles[1],
+                    vertexC = State.circles[2];
 
                 let oppositeSumX = vertexA.x + vertexC.x,
                     oppositeSumY = vertexA.y + vertexC.y;
@@ -41,43 +41,45 @@ const bindActions = () => {
             cy = cy || d3.event.offsetY;
 
             let circle = new Circle( cx, cy, _circleRadius, d3MainSvgElem);
-            _circles.push(circle);
+            State.circles.push(circle);
 
-            _lastCircle = _newCircle;
-            _newCircle = circle;
+            State.lastCircle = State.newCircle;
+            State.newCircle = circle;
 
-            if(_lastCircle){
+            if(State.lastCircle){
 
                 let pathCoords = [
-                    "M" + _lastCircle.x, _lastCircle.y,
-                    "L" + _newCircle.x, _newCircle.y,
+                    "M" + State.lastCircle.x, State.lastCircle.y,
+                    "L" + State.newCircle.x, State.newCircle.y,
                     "Z"
                 ].join(" ");
 
-                _lastPath = _newPath;
-                _newPath = new Path(pathCoords, d3MainSvgElem);
+                State.lastPath = State.newPath;
+                State.newPath = new Path(pathCoords, d3MainSvgElem);
+                State.paths.push(State.newPath);
 
-                _lastCircle.paths.push(_newPath);
-                _newCircle.paths.push(_newPath);
+                State.lastCircle.paths.push(State.newPath);
+                State.newCircle.paths.push(State.newPath);
 
-                _newPath.circles.push(_lastCircle, _newCircle);
+                State.newPath.circles.push(State.lastCircle, State.newCircle);
 
-                if(_circles.length === 4){
+                if(State.circles.length === 4){
 
-                    let vertexA = _circles[0];
+                    let vertexA = State.circles[0];
 
                     let pathCoords = [
-                        "M" + _newCircle.x, _newCircle.y,
+                        "M" + State.newCircle.x, State.newCircle.y,
                         "L" + vertexA.x, vertexA.y,
                         "Z"
                     ].join(" ");
 
-                    _lastPath = _newPath;
-                    _newPath = new Path(pathCoords, d3MainSvgElem);
+                    State.lastPath = State.newPath;
+                    State.newPath = new Path(pathCoords, d3MainSvgElem);
+                    State.paths.push(State.newPath);
 
-                    _newPath.circles.push(_newCircle, vertexA);
-                    vertexA.paths.push(_newPath);
-                    _newCircle.paths.push(_newPath);
+                    State.newPath.circles.push(State.newCircle, vertexA);
+                    vertexA.paths.push(State.newPath);
+                    State.newCircle.paths.push(State.newPath);
                 }
             }
             circle.elements.group.on("circle-group-drag", updatePathCoordsOnCircleDrag);
@@ -106,4 +108,4 @@ const bindActions = () => {
 
 };
 
-export default bindActions;
+export default bindInteractions;

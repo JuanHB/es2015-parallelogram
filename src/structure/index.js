@@ -1,25 +1,7 @@
-import $ from 'jquery';
-
-const updateMainSvgHeight = () => {
-
-    let jqWindow = $(window),
-        jqMainSvgElem = $("svg#main-svg");
-
-    let doUpdate = () => {
-        let windowHeight = jqWindow.height();
-        jqMainSvgElem
-            .css({
-                'min-height' : (windowHeight / 2) - 40
-            });
-    };
-
-    doUpdate();
-
-    jqWindow
-        .resize(doUpdate);
-
-};
+import updateMainSvgHeight from './dashboard/update-main-svg-height';
+import bindTools from './tools';
 
 export default () => {
     updateMainSvgHeight();
-};
+    bindTools();
+}

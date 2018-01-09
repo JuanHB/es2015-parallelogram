@@ -1,5 +1,4 @@
-import bindActions from './bind-actions';
-
+import bindInteractions from './bind-interactions';
 export default () => {
-    bindActions();
+    bindInteractions();
 }
