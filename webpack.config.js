@@ -20,22 +20,30 @@ module.exports = {
                 query: {
                     presets: ['env']
                 }
-            },
+            }
         ],
-        rules: [{
-            test: /\.scss$/,
-            use: extractSass.extract({
+        rules: [
+            {
+                test: /(\.scss|\.css)$/,
+                use: extractSass.extract({
+                    use: [
+                        { loader: "css-loader", options: { sourceMap: true }},
+                        { loader: "sass-loader", options: { sourceMap: true }}
+                    ],
+                    fallback: "style-loader"
+                }),
+            },
+            {
+                test: require.resolve('jquery'),
                 use: [
-                    { loader: "css-loader", options: { sourceMap: true }},
-                    { loader: "sass-loader", options: { sourceMap: true }}
-                ],
-                // use style-loader in development
-                fallback: "style-loader"
-            })
-        }]
+                    { loader: 'expose-loader', options: 'jQuery' },
+                    { loader: 'expose-loader', options: '$' }
+                ]
+            },
+        ]
     },
     plugins: [
-        extractSass
+        extractSass,
     ],
     stats: {
         colors: true

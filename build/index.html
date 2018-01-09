@@ -3,14 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="styles.css">
     <script src="main.bundle.js"></script>
 </head>
 <body>
-    <svg
-        id="main-svg"
-        xmlns="http://www.w3.org/2000/svg"
-        style="width:100%; height:100%; border: 2px solid lightskyblue; ">
-    </svg>
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="#">Parallelogram ES6</a>
+
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#">Disabled</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main role="main" class="container">
+
+        <div class="starter-template">
+            <h1>Playing with shapes.</h1>
+            <p class="lead">
+                Click anywhere inside the area bellow to start drawing your parallelogram.
+                Then change its shape by dragging the created corners.
+            </p>
+            <div class="container box-shadow">
+                <svg
+                        id="main-svg"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style="width:100%; height:50%; border: 2px solid #868e96; ">
+                </svg>
+            </div>
+
+        </div>
+
+    </main><!-- /.container -->
 </body>
 </html>

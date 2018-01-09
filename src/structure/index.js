@@ -9,7 +9,7 @@ const updateMainSvgHeight = () => {
         let windowHeight = jqWindow.height();
         jqMainSvgElem
             .css({
-                'min-height' : windowHeight - 40
+                'min-height' : (windowHeight / 2) - 40
             });
     };
 

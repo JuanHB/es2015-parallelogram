@@ -1,3 +1,9 @@
+body {
+  padding-top: 5rem; }
+
+div.info {
+  float: left; }
+
 .circle, .circle-active {
   fill: #FF0000;
   cursor: move;
