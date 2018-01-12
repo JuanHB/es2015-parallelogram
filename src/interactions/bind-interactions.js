@@ -1,26 +1,27 @@
 import * as d3 from 'd3';
-import { Circle, Path } from '../elements';
+import { Circle, Path, CircleArea } from '../elements';
 import State from '../state';
 
 const bindInteractions = () => {
 
     let d3MainSvgElem = d3.select("svg#main-svg"),
-        _circleRadius = 11,
-        _newCircle, _lastCircle, _lastPath, _newPath;
+        d3PathsGroup = d3MainSvgElem.select("g#paths-group"),
+        _circleRadius = 11;
 
     function createCircleOnClick() {
 
+        const circles = State.circles;
         let target = d3.select(d3.event.target);
 
-        if( target.attr('id') === 'main-svg' && State.circles.length < 3){
+        if( target.attr('id') === 'main-svg' && circles.length < 3){
 
             doCircleCreation();
 
-            if(State.circles.length === 3){
+            if(circles.length === 3){
 
-                let vertexA = State.circles[0],
-                    vertexB = State.circles[1],
-                    vertexC = State.circles[2];
+                let vertexA = circles[0],
+                    vertexB = circles[1],
+                    vertexC = circles[2];
 
                 let oppositeSumX = vertexA.x + vertexC.x,
                     oppositeSumY = vertexA.y + vertexC.y;
@@ -32,6 +33,9 @@ const bindInteractions = () => {
 
                 doCircleCreation(vertexD.x, vertexD.y);
 
+                doCircleAreaCreation();
+
+
             }
         }
 
@@ -40,13 +44,15 @@ const bindInteractions = () => {
             cx = cx || d3.event.offsetX;
             cy = cy || d3.event.offsetY;
 
-            let circle = new Circle( cx, cy, _circleRadius, d3MainSvgElem);
-            State.circles.push(circle);
+            const circle = new Circle( cx, cy, _circleRadius, d3MainSvgElem);
+            circles.push(circle);
 
             State.lastCircle = State.newCircle;
             State.newCircle = circle;
 
             if(State.lastCircle){
+
+                State.newCircle.circleBefore = State.lastCircle;
 
                 let pathCoords = [
                     "M" + State.lastCircle.x, State.lastCircle.y,
@@ -55,7 +61,7 @@ const bindInteractions = () => {
                 ].join(" ");
 
                 State.lastPath = State.newPath;
-                State.newPath = new Path(pathCoords, d3MainSvgElem);
+                State.newPath = new Path(pathCoords, d3PathsGroup);
                 State.paths.push(State.newPath);
 
                 State.lastCircle.paths.push(State.newPath);
@@ -63,9 +69,9 @@ const bindInteractions = () => {
 
                 State.newPath.circles.push(State.lastCircle, State.newCircle);
 
-                if(State.circles.length === 4){
+                if(circles.length === 4){
 
-                    let vertexA = State.circles[0];
+                    const vertexA = circles[0];
 
                     let pathCoords = [
                         "M" + State.newCircle.x, State.newCircle.y,
@@ -74,22 +80,84 @@ const bindInteractions = () => {
                     ].join(" ");
 
                     State.lastPath = State.newPath;
-                    State.newPath = new Path(pathCoords, d3MainSvgElem);
+                    State.newPath = new Path(pathCoords, d3PathsGroup);
                     State.paths.push(State.newPath);
 
                     State.newPath.circles.push(State.newCircle, vertexA);
-                    vertexA.paths.push(State.newPath);
                     State.newCircle.paths.push(State.newPath);
+
+                    vertexA.paths.push(State.newPath);
+                    vertexA.circleBefore = State.newCircle;
+
                 }
             }
-            circle.elements.group.on("circle-group-drag", updatePathCoordsOnCircleDrag);
+
+            circle.elements.group.on("circle-group-drag-move", updatePathCoordsOnCircleDrag);
         }
 
     }
 
+    function doCircleAreaCreation(){
+
+        let pathsGroupBBox = d3PathsGroup.node().getBBox();
+        let groupCenter = {
+            x : pathsGroupBBox.x + (pathsGroupBBox.width / 2),
+            y : pathsGroupBBox.y + (pathsGroupBBox.height / 2)
+        };
+
+        let groupTopLeftCorner = {
+            x : pathsGroupBBox.x + pathsGroupBBox.width,
+            y : pathsGroupBBox.y
+        };
+
+        let a = groupCenter.x - groupTopLeftCorner.x;
+        let b = groupCenter.y - groupTopLeftCorner.y;
+        let r = Math.sqrt( a*a + b*b ); // * Math.PI / 180;
+
+        let circleArea = new CircleArea(groupCenter.x, groupCenter.y, r, d3MainSvgElem);
+        State.circleArea.push(circleArea);
+    }
+
+    function updateCircleArea(){
+
+        const circleArea = State.circleArea[0];
+
+        let pathsGroupBBox = d3PathsGroup.node().getBBox();
+        let groupCenter = {
+            x : pathsGroupBBox.x + (pathsGroupBBox.width / 2),
+            y : pathsGroupBBox.y + (pathsGroupBBox.height / 2)
+        };
+
+        let groupTopLeftCorner = {
+            x : pathsGroupBBox.x + pathsGroupBBox.width,
+            y : pathsGroupBBox.y
+        };
+
+        let a = groupCenter.x - groupTopLeftCorner.x;
+        let b = groupCenter.y - groupTopLeftCorner.y;
+        let r = Math.sqrt( a*a + b*b ); // * Math.PI / 180;
+
+        circleArea.updateCircleCoordinates(groupCenter.x, groupCenter.y, r)
+
+    }
+
+
     function updatePathCoordsOnCircleDrag(){
 
-        let eventCircle = d3.event.detail;
+        const eventCircle = d3.event.detail;
+
+        // let a = eventCircle.x - eventCircle.circleBefore.x;
+        // let b = eventCircle.y - eventCircle.circleBefore.y;
+        // let c = Math.sqrt( a*a + b*b);
+        //
+        // console.log(a, b, c)
+        //
+        // eventCircle.circleBefore.x += a;
+        // eventCircle.circleBefore.y += b;
+        // eventCircle.circleBefore.setGroupTranslate([eventCircle.circleBefore.x, eventCircle.circleBefore.y]);
+
+
+        // let r = Math.sqrt( a*a + b*b ); // * Math.PI / 180;
 
         eventCircle.paths.forEach((path) => {
             let pathCircles = path.circles;
@@ -100,6 +168,10 @@ const bindInteractions = () => {
             ].join(" ");
             path.updatePathCoords(newPathCoords);
         });
+
+        updateCircleArea();
+
+        console.log(eventCircle)
 
     }
 

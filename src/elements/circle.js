@@ -12,6 +12,7 @@ class Circle {
 
         this.id = this.constructor.generateHex();
         this.paths = [];
+        this.circleBefore = null;
         this.elements = {
             group : null, circle : null, text : null
         };
@@ -49,56 +50,111 @@ class Circle {
 
     bindGroupDrag(){
 
-        let group = this.elements.group,
-            circle = this.elements.circle,
-            text = this.elements.text;
+        let textElem = this.elements.text,
+            groupElem = this.elements.group,
+            circleElem = this.elements.circle;
 
         let dragStart = () => {
 
-            group
+            let circleBefore = this.circleBefore;
+
+            groupElem
                 .raise();
 
-            circle
+            circleElem
                 .classed( "circle-active", true )
                 .attr("cx", 0)
                 .attr("cy", 0);
 
-            text
+            textElem
                 .attr("x", this.textPosCorrection.x)
                 .attr("y", this.textPosCorrection.y);
 
-            this.updateTextValue();
             this.setGroupTranslate([this.x, this.y]);
+
+            if(circleBefore){
+
+                let circleBeforeTextElem = circleBefore.elements.text,
+                    circleBeforeGroupElem = circleBefore.elements.group,
+                    circleBeforeCircleElem = circleBefore.elements.circle;
+
+                circleBeforeGroupElem
+                    .raise();
+
+                circleBeforeCircleElem
+                    .classed( "circle-active", true )
+                    .attr("cx", 0)
+                    .attr("cy", 0);
+
+                circleBeforeTextElem
+                    .attr("x", circleBefore.textPosCorrection.x)
+                    .attr("y", circleBefore.textPosCorrection.y);
+
+                circleBefore.setGroupTranslate([circleBefore.x, circleBefore.y]);
+
+            }
 
         };
 
         let dragMove = () => {
 
+            const circleBefore = this.circleBefore;
+
             this.x += d3.event.dx;
             this.y += d3.event.dy;
 
-            this.updateTextValue();
             this.setGroupTranslate([this.x, this.y]);
 
+            groupElem.dispatch("circle-group-drag-move", { detail : this } );
 
-            group.dispatch("circle-group-drag", { detail : this } );
+            if(circleBefore){
+
+                let circleBeforeGroupElem = circleBefore.elements.group;
+
+                circleBefore.x += d3.event.dx;
+                circleBefore.y += d3.event.dy;
+
+                circleBefore.setGroupTranslate([circleBefore.x, circleBefore.y]);
+
+                circleBeforeGroupElem.dispatch("circle-group-drag-move", { detail : circleBefore });
+
+            }
+
         };
 
         let dragEnd = () =>{
-            circle
+
+            const circleBefore = this.circleBefore;
+
+            circleElem
                 .classed("circle-active", false)
                 .attr("cx", this.x)
                 .attr("cy", this.y);
 
-            text
+            textElem
                 .attr("x", this.x + this.textPosCorrection.x)
                 .attr("y", this.y + this.textPosCorrection.y);
 
-            this.updateTextValue();
             this.setGroupTranslate(null);
+
+            if(circleBefore){
+                let circleBeforeCircleElem = circleBefore.elements.circle,
+                    circleBeforeTextElem = circleBefore.elements.text;
+
+                circleBeforeCircleElem
+                    .classed("circle-active", false)
+                    .attr("cx", circleBefore.x)
+                    .attr("cy", circleBefore.y);
+
+                circleBeforeTextElem
+                    .attr("x", circleBefore.x + circleBefore.textPosCorrection.x)
+                    .attr("y", circleBefore.y + circleBefore.textPosCorrection.y);
+
+                circleBefore.setGroupTranslate(null);
+            }
         };
 
-        group
+        groupElem
             .call(d3.drag()
                 .on("start", dragStart)
                 .on("drag", dragMove)
@@ -108,10 +164,11 @@ class Circle {
 
     setGroupTranslate(positionArray){
 
-        let group = this.elements.group,
-            translateString = positionArray ? "translate("+positionArray+")" : null;
-        group
+        let translateString = positionArray ? "translate("+positionArray+")" : null;
+        this.elements.group
             .attr("transform", translateString);
+
+        this.updateTextValue();
 
     }
 
