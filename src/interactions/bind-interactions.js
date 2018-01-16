@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import { Circle, Path, CircleArea } from '../elements';
 import State from '../state';
+import math from './math';
 
 const bindInteractions = () => {
 
@@ -32,9 +33,16 @@ const bindInteractions = () => {
                 };
 
                 doCircleCreation(vertexD.x, vertexD.y);
-
                 doCircleAreaCreation();
 
+                let pCenter = math.getParallelogramCenter();
+
+                d3MainSvgElem
+                    .append("circle")
+                    .attr("r", 5)
+                    .attr("cx", pCenter.x)
+                    .attr("cy", pCenter.y)
+                    .attr("fill", "black")
 
             }
         }
@@ -135,29 +143,19 @@ const bindInteractions = () => {
 
         let a = groupCenter.x - groupTopLeftCorner.x;
         let b = groupCenter.y - groupTopLeftCorner.y;
-        let r = Math.sqrt( a*a + b*b ); // * Math.PI / 180;
+        let r = Math.sqrt( a*a + b*b );
 
         circleArea.updateCircleCoordinates(groupCenter.x, groupCenter.y, r)
 
     }
+    
+    function getParallelogramArea() {
 
+    }
 
     function updatePathCoordsOnCircleDrag(){
 
         const eventCircle = d3.event.detail;
-
-        // let a = eventCircle.x - eventCircle.circleBefore.x;
-        // let b = eventCircle.y - eventCircle.circleBefore.y;
-        // let c = Math.sqrt( a*a + b*b);
-        //
-        // console.log(a, b, c)
-        //
-        // eventCircle.circleBefore.x += a;
-        // eventCircle.circleBefore.y += b;
-        // eventCircle.circleBefore.setGroupTranslate([eventCircle.circleBefore.x, eventCircle.circleBefore.y]);
-
-
-        // let r = Math.sqrt( a*a + b*b ); // * Math.PI / 180;
 
         eventCircle.paths.forEach((path) => {
             let pathCircles = path.circles;
@@ -169,10 +167,9 @@ const bindInteractions = () => {
             path.updatePathCoords(newPathCoords);
         });
 
-        updateCircleArea();
-
-        console.log(eventCircle)
-
+        if(State.circleArea.length){
+            updateCircleArea();
+        }
     }
 
     d3MainSvgElem

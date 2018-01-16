@@ -21129,6 +21129,8 @@ module.exports = identity;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_d3__ = __webpack_require__(100);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__elements__ = __webpack_require__(511);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__state__ = __webpack_require__(94);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__math__ = __webpack_require__(520);
+
 
 
 
@@ -21163,9 +21165,16 @@ const bindInteractions = () => {
                 };
 
                 doCircleCreation(vertexD.x, vertexD.y);
-
                 doCircleAreaCreation();
 
+                let pCenter = __WEBPACK_IMPORTED_MODULE_3__math__["a" /* default */].getParallelogramCenter();
+
+                d3MainSvgElem
+                    .append("circle")
+                    .attr("r", 5)
+                    .attr("cx", pCenter.x)
+                    .attr("cy", pCenter.y)
+                    .attr("fill", "black")
 
             }
         }
@@ -21266,29 +21275,19 @@ const bindInteractions = () => {
 
         let a = groupCenter.x - groupTopLeftCorner.x;
         let b = groupCenter.y - groupTopLeftCorner.y;
-        let r = Math.sqrt( a*a + b*b ); // * Math.PI / 180;
+        let r = Math.sqrt( a*a + b*b );
 
         circleArea.updateCircleCoordinates(groupCenter.x, groupCenter.y, r)
 
     }
+    
+    function getParallelogramArea() {
 
+    }
 
     function updatePathCoordsOnCircleDrag(){
 
         const eventCircle = __WEBPACK_IMPORTED_MODULE_0_d3__["b" /* event */].detail;
-
-        // let a = eventCircle.x - eventCircle.circleBefore.x;
-        // let b = eventCircle.y - eventCircle.circleBefore.y;
-        // let c = Math.sqrt( a*a + b*b);
-        //
-        // console.log(a, b, c)
-        //
-        // eventCircle.circleBefore.x += a;
-        // eventCircle.circleBefore.y += b;
-        // eventCircle.circleBefore.setGroupTranslate([eventCircle.circleBefore.x, eventCircle.circleBefore.y]);
-
-
-        // let r = Math.sqrt( a*a + b*b ); // * Math.PI / 180;
 
         eventCircle.paths.forEach((path) => {
             let pathCircles = path.circles;
@@ -21300,10 +21299,9 @@ const bindInteractions = () => {
             path.updatePathCoords(newPathCoords);
         });
 
-        updateCircleArea();
-
-        console.log(eventCircle)
-
+        if(__WEBPACK_IMPORTED_MODULE_2__state__["a" /* default */].circleArea.length){
+            updateCircleArea();
+        }
     }
 
     d3MainSvgElem
@@ -34707,6 +34705,34 @@ class CircleArea {
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (CircleArea);
+
+/***/ }),
+/* 520 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__state__ = __webpack_require__(94);
+
+
+const math = {
+
+    getParallelogramCenter(){
+
+        let circles = __WEBPACK_IMPORTED_MODULE_0__state__["a" /* default */].circles,
+            vertexA = circles[0],
+            vertexB = circles[1],
+            vertexC = circles[2],
+            vertexD = circles[3];
+
+        return {
+            x : (vertexA.x+vertexB.x+vertexC.x+vertexD.x) / 4,
+            y : (vertexA.y+vertexB.y+vertexC.y+vertexD.y) / 4
+        };
+    }
+
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (math);
 
 /***/ })
 /******/ ]);
