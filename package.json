@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Demo app of parallelogram interactions, made with ES2015+, d3.js and SVG",
   "main": "index.js",
-  "repository": "https://github.com/JuanHB/es6-parallelogram.git",
+  "repository": "https://github.com/JuanHB/es2015-parallelogram.git",
   "scripts": {
     "start": "http-server",
     "webpack": "webpack"
