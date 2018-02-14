@@ -1,11 +1,10 @@
 {
-  "name": "Parallelogram",
+  "name": "ES2015+ Parallelogram",
   "version": "1.0.0",
-  "description": "Demo app of parallelogram interactions, made with ES6, D3JS and SVG",
+  "description": "Demo app of parallelogram interactions, made with ES2015+, d3.js and SVG",
   "main": "index.js",
   "repository": "https://github.com/JuanHB/es6-parallelogram.git",
   "scripts": {
-    "babel": "babel --presets es2015 src/main.js -o build/main.bundle.js",
     "start": "http-server",
     "webpack": "webpack"
   },
