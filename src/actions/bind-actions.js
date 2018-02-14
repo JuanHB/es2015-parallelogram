@@ -19,6 +19,8 @@ const bindActions = () => {
         State.circles.forEach(removeElement);
         State.circleArea.forEach(removeElement);
 
+        State.centerCircle.remove();
+
         State.resetState();
 
     }
