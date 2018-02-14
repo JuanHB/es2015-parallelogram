@@ -1,8 +1,8 @@
 const State = {
     paths: [],
     circles: [],
-    centerCircle: null,
-    circleArea : [],
+    areaCircle: [],
+    centerCircle: [],
 
     newPath: null,
     lastPath: null,
@@ -17,8 +17,8 @@ const State = {
         this.lastPath = null;
         this.newCircle = null;
         this.lastCircle = null;
-        this.circleArea = [];
-        this.centerCircle = null;
+        this.areaCircle = [];
+        this.centerCircle = [];
     }
 };
 

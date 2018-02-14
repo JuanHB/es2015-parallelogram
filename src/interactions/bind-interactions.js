@@ -1,22 +1,22 @@
 import * as d3 from 'd3';
-import { Circle, Path, CircleArea } from '../elements';
+import { VertexCircle, VertexPath, AreaCircle, CenterCircle } from '../elements';
 import State from '../state';
-import math from './math';
+import math from '../utils/math';
 
 const bindInteractions = () => {
 
     let d3MainSvgElem = d3.select("svg#main-svg"),
-        d3PathsGroup = d3MainSvgElem.select("g#paths-group"),
+        d3PathsGroup  = d3MainSvgElem.select("g#paths-group"),
         _circleRadius = 11;
 
-    function createCircleOnClick() {
+    function createVertexCircleOnClick() {
 
         const circles = State.circles;
         let target = d3.select(d3.event.target);
 
         if( target.attr('id') === 'main-svg' && circles.length < 3){
 
-            doCircleCreation();
+            doVertexCircleCreation();
 
             if(circles.length === 3){
 
@@ -32,8 +32,8 @@ const bindInteractions = () => {
                     y : oppositeSumY - vertexB.y
                 };
 
-                doCircleCreation(vertexD.x, vertexD.y);
-                doCircleAreaCreation();
+                doVertexCircleCreation(vertexD.x, vertexD.y);
+                doAreaCircleCreation();
 
                 let pCenter = math.getParallelogramCenter();
                 doCenterCircleCreation(pCenter.x, pCenter.y);
@@ -41,12 +41,12 @@ const bindInteractions = () => {
             }
         }
 
-        function doCircleCreation(cx, cy){
+        function doVertexCircleCreation(cx, cy){
 
             cx = cx || d3.event.offsetX;
             cy = cy || d3.event.offsetY;
 
-            const circle = new Circle( cx, cy, _circleRadius, d3MainSvgElem);
+            const circle = new VertexCircle( cx, cy, _circleRadius, d3MainSvgElem);
             circles.push(circle);
 
             State.lastCircle = State.newCircle;
@@ -63,7 +63,7 @@ const bindInteractions = () => {
                 ].join(" ");
 
                 State.lastPath = State.newPath;
-                State.newPath = new Path(pathCoords, d3PathsGroup);
+                State.newPath = new VertexPath(pathCoords, d3PathsGroup);
                 State.paths.push(State.newPath);
 
                 State.lastCircle.paths.push(State.newPath);
@@ -82,7 +82,7 @@ const bindInteractions = () => {
                     ].join(" ");
 
                     State.lastPath = State.newPath;
-                    State.newPath = new Path(pathCoords, d3PathsGroup);
+                    State.newPath = new VertexPath(pathCoords, d3PathsGroup);
                     State.paths.push(State.newPath);
 
                     State.newPath.circles.push(State.newCircle, vertexA);
@@ -94,82 +94,50 @@ const bindInteractions = () => {
                 }
             }
 
-            circle.elements.group.on("circle-group-drag-move", updatePathCoordsOnCircleDrag);
+            circle.elements.group.on("vertex-circle-group-drag-move", updatePathCoordsOnCircleDrag);
         }
 
     }
 
-    function doCircleAreaCreation(){
-
-        let parallelogramArea = getParallelogramArea();
-
-        let r = Math.sqrt(parallelogramArea / Math.PI);
-
-        let pathsGroupBBox = d3PathsGroup.node().getBBox();
-        let groupCenter = {
-            x : pathsGroupBBox.x + (pathsGroupBBox.width / 2),
-            y : pathsGroupBBox.y + (pathsGroupBBox.height / 2)
-        };
-
-        let groupTopLeftCorner = {
-            x : pathsGroupBBox.x + pathsGroupBBox.width,
-            y : pathsGroupBBox.y
-        };
-
-        let a = groupCenter.x - groupTopLeftCorner.x;
-        let b = groupCenter.y - groupTopLeftCorner.y;
-        //let r = Math.sqrt( a*a + b*b );
-
-        let circleArea = new CircleArea(groupCenter.x, groupCenter.y, r, d3MainSvgElem);
-        State.circleArea.push(circleArea);
+    function doAreaCircleCreation(){
+        let {x, y, r} = calcAreaCircleCoordinates();
+        let areaCircle = new AreaCircle(x, y, r, d3MainSvgElem);
+        State.areaCircle.push(areaCircle);
     }
 
-    function updateCircleArea(){
+    function updateAreaCircle(){
 
-        const circleArea = State.circleArea[0];
+        let {x, y, r} = calcAreaCircleCoordinates();
+        const areaCircle = State.areaCircle[0];
+
+        areaCircle.updateCircleCoordinates(x, y, r);
+        areaCircle.updateTextValueAndPos();
+
+    }
+
+    function calcAreaCircleCoordinates(){
 
         let parallelogramArea = getParallelogramArea();
+        let pathsGroupBBox = d3PathsGroup.node().getBBox();
 
         let r = Math.sqrt(parallelogramArea / Math.PI);
+        let x = pathsGroupBBox.x + (pathsGroupBBox.width / 2);
+        let y = pathsGroupBBox.y + (pathsGroupBBox.height / 2);
 
-        let pathsGroupBBox = d3PathsGroup.node().getBBox();
-        let groupCenter = {
-            x : pathsGroupBBox.x + (pathsGroupBBox.width / 2),
-            y : pathsGroupBBox.y + (pathsGroupBBox.height / 2)
-        };
-
-        let groupTopLeftCorner = {
-            x : pathsGroupBBox.x + pathsGroupBBox.width,
-            y : pathsGroupBBox.y
-        };
-
-        let a = groupCenter.x - groupTopLeftCorner.x;
-        let b = groupCenter.y - groupTopLeftCorner.y;
-        //let r = Math.sqrt( a*a + b*b );
-
-        circleArea.updateCircleCoordinates(groupCenter.x, groupCenter.y, r)
-
+        return { x, y, r }
     }
 
     function doCenterCircleCreation(cx, cy){
-        State.centerCircle = d3MainSvgElem
-            .append("circle")
-            .attr("r", 3)
-            .attr("id", "center")
-            .attr("cx", cx)
-            .attr("cy", cy)
-            .attr("fill", "black");
+        let centerCircle = new CenterCircle(cx, cy, 3, d3MainSvgElem);
+        State.centerCircle.push(centerCircle);
     }
 
     function updateCenterCircle(){
-        let circleCenter = State.centerCircle;
-        let pCenter = math.getParallelogramCenter();
+        let { x, y } = math.getParallelogramCenter();
+        let centerCircle = State.centerCircle[0];
 
-        circleCenter
-            .attr("cx", pCenter.x)
-            .attr("cy", pCenter.y)
-            .attr("fill", "black");
-
+        centerCircle.updateTextCoordinates(x, y);
+        centerCircle.updateCircleCoordinates(x, y);
     }
 
     function getParallelogramArea() {
@@ -208,16 +176,14 @@ const bindInteractions = () => {
             path.updatePathCoords(newPathCoords);
         });
 
-        if(State.circleArea.length){
-            updateCircleArea();
+        if(State.areaCircle.length){
+            updateAreaCircle();
             updateCenterCircle()
         }
     }
 
-
-
     d3MainSvgElem
-        .on('click', createCircleOnClick);
+        .on('click', createVertexCircleOnClick);
 
 };
 

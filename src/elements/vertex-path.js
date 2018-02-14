@@ -1,4 +1,4 @@
-class Path {
+class VertexPath {
 
     constructor(pathCoords, svgElem){
 
@@ -18,7 +18,7 @@ class Path {
 
         this.elements.path = this.svgElem.insert("path", ":first-child");
         this.elements.path
-            .attr("id", ["path-", this.id].join(""))
+            .attr("id", ["vertex-path-", this.id].join(""))
             .attr("class", "path")
             .attr("d", this.pathCoords);
 
@@ -35,4 +35,4 @@ class Path {
 
 }
 
-export default Path;
+export default VertexPath;

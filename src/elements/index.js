@@ -1,5 +1,6 @@
-import Circle from './circle';
-import Path from './path';
-import CircleArea from './circle-area'
+import VertexPath from './vertex-path';
+import VertexCircle from './vertex-circle';
+import AreaCircle from './area-circle'
+import CenterCircle from './center-circle';
 
-export { Circle, Path, CircleArea };
+export { VertexPath, VertexCircle, AreaCircle, CenterCircle };

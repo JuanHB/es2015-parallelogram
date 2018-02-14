@@ -24,6 +24,9 @@ div.info {
   stroke-width: 1px;
   fill: none; }
 
+.center-circle {
+  fill: black; }
+
 .text {
   text-anchor: middle;
   font-family: Arial, Helvetica, sans-serif;

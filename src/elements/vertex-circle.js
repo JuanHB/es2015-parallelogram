@@ -1,16 +1,16 @@
 import * as d3 from 'd3';
+import ElementsUtils from '../utils/elements';
 
-class Circle {
+class VertexCircle {
 
     constructor(x, y, r, svgElem){
 
         this.r = r;
         this.x = x;
         this.y = y;
-
         this.svgElem = svgElem;
 
-        this.id = this.constructor.generateHex();
+        this.id = ElementsUtils.generateHex();
         this.paths = [];
         this.circleBefore = null;
         this.elements = {
@@ -28,20 +28,23 @@ class Circle {
         this.elements.text   = this.elements.group.append("text");
         this.elements.circle = this.elements.group.append("circle");
 
+        let { x, y, r, id, textPosCorrection, elements } = this;
+        let { group, circle, text } = elements;
+
         // set initial attributes for each element
-        this.elements.group
-            .attr( "id", [ "circle-group-", this.id ].join(""));
+        group
+            .attr( "id", [ "vertex-circle-group-", id ].join(""));
 
-        this.elements.circle
+        circle
             .attr("class", "circle")
-            .attr("r", this.r)
-            .attr("cx", this.x)
-            .attr("cy", this.y);
+            .attr("r", r)
+            .attr("cx", x)
+            .attr("cy", y);
 
-        this.elements.text
+        text
             .attr("class", "text")
-            .attr("x", this.x + this.textPosCorrection.x)
-            .attr("y", this.y + this.textPosCorrection.y);
+            .attr("x", x + textPosCorrection.x)
+            .attr("y", y + textPosCorrection.y);
 
         this.updateTextValue();
         this.bindGroupDrag();
@@ -50,47 +53,44 @@ class Circle {
 
     bindGroupDrag(){
 
-        let textElem = this.elements.text,
-            groupElem = this.elements.group,
-            circleElem = this.elements.circle;
+        let { group, circle, text } = this.elements;
 
         let dragStart = () => {
 
-            let circleBefore = this.circleBefore;
+            let { x, y, textPosCorrection, circleBefore } = this;
 
-            groupElem
+            group
                 .raise();
 
-            circleElem
+            circle
                 .classed( "circle-active", true )
                 .attr("cx", 0)
                 .attr("cy", 0);
 
-            textElem
-                .attr("x", this.textPosCorrection.x)
-                .attr("y", this.textPosCorrection.y);
+            text
+                .attr("x", textPosCorrection.x)
+                .attr("y", textPosCorrection.y);
 
-            this.setGroupTranslate([this.x, this.y]);
+            this.setGroupTranslate([x, y]);
 
             if(circleBefore){
 
-                let circleBeforeTextElem = circleBefore.elements.text,
-                    circleBeforeGroupElem = circleBefore.elements.group,
-                    circleBeforeCircleElem = circleBefore.elements.circle;
+                let { group, circle, text } = circleBefore.elements;
+                let { x, y, textPosCorrection } = circleBefore;
 
-                circleBeforeGroupElem
+                group
                     .raise();
 
-                circleBeforeCircleElem
+                circle
                     .classed( "circle-active", true )
                     .attr("cx", 0)
                     .attr("cy", 0);
 
-                circleBeforeTextElem
-                    .attr("x", circleBefore.textPosCorrection.x)
-                    .attr("y", circleBefore.textPosCorrection.y);
+                text
+                    .attr("x", textPosCorrection.x)
+                    .attr("y", textPosCorrection.y);
 
-                circleBefore.setGroupTranslate([circleBefore.x, circleBefore.y]);
+                circleBefore.setGroupTranslate([x, y]);
 
             }
 
@@ -105,7 +105,7 @@ class Circle {
 
             this.setGroupTranslate([this.x, this.y]);
 
-            groupElem.dispatch("circle-group-drag-move", { detail : this } );
+            group.dispatch("vertex-circle-group-drag-move", { detail : this } );
 
             if(circleBefore){
 
@@ -116,7 +116,7 @@ class Circle {
 
                 circleBefore.setGroupTranslate([circleBefore.x, circleBefore.y]);
 
-                circleBeforeGroupElem.dispatch("circle-group-drag-move", { detail : circleBefore });
+                circleBeforeGroupElem.dispatch("vertex-circle-group-drag-move", { detail : circleBefore });
 
             }
 
@@ -125,36 +125,38 @@ class Circle {
         let dragEnd = () =>{
 
             const circleBefore = this.circleBefore;
+            let { x, y, textPosCorrection } = this;
 
-            circleElem
+            circle
                 .classed("circle-active", false)
-                .attr("cx", this.x)
-                .attr("cy", this.y);
+                .attr("cx", x)
+                .attr("cy", y);
 
-            textElem
-                .attr("x", this.x + this.textPosCorrection.x)
-                .attr("y", this.y + this.textPosCorrection.y);
+            text
+                .attr("x", x + textPosCorrection.x)
+                .attr("y", y + textPosCorrection.y);
 
             this.setGroupTranslate(null);
 
             if(circleBefore){
-                let circleBeforeCircleElem = circleBefore.elements.circle,
-                    circleBeforeTextElem = circleBefore.elements.text;
 
-                circleBeforeCircleElem
+                let { circle, text } = circleBefore.elements;
+                let { x, y, textPosCorrection } = circleBefore;
+
+                circle
                     .classed("circle-active", false)
-                    .attr("cx", circleBefore.x)
-                    .attr("cy", circleBefore.y);
+                    .attr("cx", x)
+                    .attr("cy", y);
 
-                circleBeforeTextElem
-                    .attr("x", circleBefore.x + circleBefore.textPosCorrection.x)
-                    .attr("y", circleBefore.y + circleBefore.textPosCorrection.y);
+                text
+                    .attr("x", x + textPosCorrection.x)
+                    .attr("y", y + textPosCorrection.y);
 
                 circleBefore.setGroupTranslate(null);
             }
         };
 
-        groupElem
+        group
             .call(d3.drag()
                 .on("start", dragStart)
                 .on("drag", dragMove)
@@ -176,11 +178,7 @@ class Circle {
         this.elements.text.text(["x ", this.x, " | y ", this.y].join(""));
     }
 
-    static generateHex() {
-        return (Math.random()*0xFFFFFF<<0).toString(16);
-    }
-
 
 }
 
-export default Circle;
+export default VertexCircle;
