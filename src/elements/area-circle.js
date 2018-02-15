@@ -21,8 +21,8 @@ class AreaCircle {
         this.elements.circle = this.elements.group.append("circle");
         this.elements.text   = this.elements.group.append("text");
 
-        let { x, y, r, id, elements} = this;
-        let { group, circle, text } = elements;
+        let { x, y, r, id, elements} = this,
+            { group, circle, text } = elements;
 
         group
             .attr("id", ["group-area-circle-", id].join(""));
@@ -56,7 +56,7 @@ class AreaCircle {
     updateTextValueAndPos(){
 
         let { r, elements, textPosCorrection } = this,
-            { group, text, circle } = elements,
+            { text, circle } = elements,
             cBBox = circle.node(0).getBBox(),
             textPos = {
                 x : ((textPosCorrection.x + cBBox.x) + (cBBox.width / 2)),

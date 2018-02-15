@@ -28,8 +28,8 @@ class VertexCircle {
         this.elements.text   = this.elements.group.append("text");
         this.elements.circle = this.elements.group.append("circle");
 
-        let { x, y, r, id, textPosCorrection, elements } = this;
-        let { group, circle, text } = elements;
+        let { x, y, r, id, textPosCorrection, elements } = this,
+            { group, circle, text } = elements;
 
         // set initial attributes for each element
         group
@@ -75,8 +75,8 @@ class VertexCircle {
 
             if(circleBefore){
 
-                let { group, circle, text } = circleBefore.elements;
-                let { x, y, textPosCorrection } = circleBefore;
+                let { group, circle, text } = circleBefore.elements,
+                    { x, y, textPosCorrection } = circleBefore;
 
                 group
                     .raise();
@@ -140,8 +140,8 @@ class VertexCircle {
 
             if(circleBefore){
 
-                let { circle, text } = circleBefore.elements;
-                let { x, y, textPosCorrection } = circleBefore;
+                let { circle, text } = circleBefore.elements,
+                    { x, y, textPosCorrection } = circleBefore;
 
                 circle
                     .classed("circle-active", false)

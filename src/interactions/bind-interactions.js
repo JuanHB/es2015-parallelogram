@@ -100,8 +100,8 @@ const bindInteractions = () => {
     }
 
     function doAreaCircleCreation(){
-        let {x, y, r} = calcAreaCircleCoordinates();
-        let areaCircle = new AreaCircle(x, y, r, d3MainSvgElem);
+        let {x, y, r} = calcAreaCircleCoordinates(),
+            areaCircle = new AreaCircle(x, y, r, d3MainSvgElem);
         State.areaCircle.push(areaCircle);
     }
 
@@ -117,12 +117,11 @@ const bindInteractions = () => {
 
     function calcAreaCircleCoordinates(){
 
-        let parallelogramArea = getParallelogramArea();
-        let pathsGroupBBox = d3PathsGroup.node().getBBox();
-
-        let r = Math.sqrt(parallelogramArea / Math.PI);
-        let x = pathsGroupBBox.x + (pathsGroupBBox.width / 2);
-        let y = pathsGroupBBox.y + (pathsGroupBBox.height / 2);
+        let parallelogramArea = getParallelogramArea(),
+            pathsGroupBBox = d3PathsGroup.node().getBBox(),
+            r = Math.sqrt(parallelogramArea / Math.PI),
+            x = pathsGroupBBox.x + (pathsGroupBBox.width / 2),
+            y = pathsGroupBBox.y + (pathsGroupBBox.height / 2);
 
         return { x, y, r }
     }
@@ -133,8 +132,8 @@ const bindInteractions = () => {
     }
 
     function updateCenterCircle(){
-        let { x, y } = math.getParallelogramCenter();
-        let centerCircle = State.centerCircle[0];
+        let { x, y } = math.getParallelogramCenter(),
+            centerCircle = State.centerCircle[0];
 
         centerCircle.updateTextCoordinates(x, y);
         centerCircle.updateCircleCoordinates(x, y);
@@ -153,11 +152,10 @@ const bindInteractions = () => {
             return Math.hypot(p2.x - p1.x, p2.y - p1.y)
         };
 
-        let basePoints = [ sortedByY[2], sortedByY[3] ];
-        let heightPoints = [ sortedByY[0], sortedByY[2] ];
-
-        let base = getDist(basePoints[0], basePoints[1]);
-        let height = getDist(heightPoints[0], heightPoints[1]);
+        let basePoints = [ sortedByY[2], sortedByY[3] ],
+            heightPoints = [ sortedByY[0], sortedByY[2] ],
+            base = getDist(basePoints[0], basePoints[1]),
+            height = getDist(heightPoints[0], heightPoints[1]);
 
         return base * height;
     }
@@ -167,12 +165,12 @@ const bindInteractions = () => {
         const eventCircle = d3.event.detail;
 
         eventCircle.paths.forEach((path) => {
-            let pathCircles = path.circles;
-            let newPathCoords = [
-                "M" + pathCircles[0].x, pathCircles[0].y,
-                "L" + pathCircles[1].x, pathCircles[1].y,
-                "Z"
-            ].join(" ");
+            let pathCircles = path.circles,
+                newPathCoords = [
+                    "M" + pathCircles[0].x, pathCircles[0].y,
+                    "L" + pathCircles[1].x, pathCircles[1].y,
+                    "Z"
+                ].join(" ");
             path.updatePathCoords(newPathCoords);
         });
 

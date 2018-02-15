@@ -25,8 +25,8 @@ class CenterCircle {
         this.elements.circle = this.elements.group.append("circle");
         this.elements.text   = this.elements.group.append("text");
 
-        let { x, y, r, id, elements, textPosCorrection } = this;
-        let { group, circle, text } = elements;
+        let { x, y, r, id, elements, textPosCorrection } = this,
+            { group, circle, text } = elements;
 
         group
             .attr("id", ["center-circle-",this.id].join(""));
