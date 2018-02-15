@@ -9842,9 +9842,7 @@ const updateMainSvgHeight = () => {
     let doUpdate = () => {
         let windowHeight = jqWindow.height();
         jqMainSvgElem
-            .css({
-                'min-height' : windowHeight / 2
-            });
+            .css({ 'min-height' : windowHeight / 2 });
     };
 
     doUpdate();
@@ -21361,8 +21359,8 @@ const bindInteractions = () => {
     }
 
     function doAreaCircleCreation(){
-        let {x, y, r} = calcAreaCircleCoordinates();
-        let areaCircle = new __WEBPACK_IMPORTED_MODULE_1__elements__["a" /* AreaCircle */](x, y, r, d3MainSvgElem);
+        let {x, y, r} = calcAreaCircleCoordinates(),
+            areaCircle = new __WEBPACK_IMPORTED_MODULE_1__elements__["a" /* AreaCircle */](x, y, r, d3MainSvgElem);
         __WEBPACK_IMPORTED_MODULE_2__state__["a" /* default */].areaCircle.push(areaCircle);
     }
 
@@ -21378,12 +21376,11 @@ const bindInteractions = () => {
 
     function calcAreaCircleCoordinates(){
 
-        let parallelogramArea = getParallelogramArea();
-        let pathsGroupBBox = d3PathsGroup.node().getBBox();
-
-        let r = Math.sqrt(parallelogramArea / Math.PI);
-        let x = pathsGroupBBox.x + (pathsGroupBBox.width / 2);
-        let y = pathsGroupBBox.y + (pathsGroupBBox.height / 2);
+        let parallelogramArea = getParallelogramArea(),
+            pathsGroupBBox = d3PathsGroup.node().getBBox(),
+            r = Math.sqrt(parallelogramArea / Math.PI),
+            x = pathsGroupBBox.x + (pathsGroupBBox.width / 2),
+            y = pathsGroupBBox.y + (pathsGroupBBox.height / 2);
 
         return { x, y, r }
     }
@@ -21394,8 +21391,8 @@ const bindInteractions = () => {
     }
 
     function updateCenterCircle(){
-        let { x, y } = __WEBPACK_IMPORTED_MODULE_3__utils_math__["a" /* default */].getParallelogramCenter();
-        let centerCircle = __WEBPACK_IMPORTED_MODULE_2__state__["a" /* default */].centerCircle[0];
+        let { x, y } = __WEBPACK_IMPORTED_MODULE_3__utils_math__["a" /* default */].getParallelogramCenter(),
+            centerCircle = __WEBPACK_IMPORTED_MODULE_2__state__["a" /* default */].centerCircle[0];
 
         centerCircle.updateTextCoordinates(x, y);
         centerCircle.updateCircleCoordinates(x, y);
@@ -21414,11 +21411,10 @@ const bindInteractions = () => {
             return Math.hypot(p2.x - p1.x, p2.y - p1.y)
         };
 
-        let basePoints = [ sortedByY[2], sortedByY[3] ];
-        let heightPoints = [ sortedByY[0], sortedByY[2] ];
-
-        let base = getDist(basePoints[0], basePoints[1]);
-        let height = getDist(heightPoints[0], heightPoints[1]);
+        let basePoints = [ sortedByY[2], sortedByY[3] ],
+            heightPoints = [ sortedByY[0], sortedByY[2] ],
+            base = getDist(basePoints[0], basePoints[1]),
+            height = getDist(heightPoints[0], heightPoints[1]);
 
         return base * height;
     }
@@ -21428,12 +21424,12 @@ const bindInteractions = () => {
         const eventCircle = __WEBPACK_IMPORTED_MODULE_0_d3__["b" /* event */].detail;
 
         eventCircle.paths.forEach((path) => {
-            let pathCircles = path.circles;
-            let newPathCoords = [
-                "M" + pathCircles[0].x, pathCircles[0].y,
-                "L" + pathCircles[1].x, pathCircles[1].y,
-                "Z"
-            ].join(" ");
+            let pathCircles = path.circles,
+                newPathCoords = [
+                    "M" + pathCircles[0].x, pathCircles[0].y,
+                    "L" + pathCircles[1].x, pathCircles[1].y,
+                    "Z"
+                ].join(" ");
             path.updatePathCoords(newPathCoords);
         });
 
@@ -34626,8 +34622,8 @@ class VertexCircle {
         this.elements.text   = this.elements.group.append("text");
         this.elements.circle = this.elements.group.append("circle");
 
-        let { x, y, r, id, textPosCorrection, elements } = this;
-        let { group, circle, text } = elements;
+        let { x, y, r, id, textPosCorrection, elements } = this,
+            { group, circle, text } = elements;
 
         // set initial attributes for each element
         group
@@ -34673,8 +34669,8 @@ class VertexCircle {
 
             if(circleBefore){
 
-                let { group, circle, text } = circleBefore.elements;
-                let { x, y, textPosCorrection } = circleBefore;
+                let { group, circle, text } = circleBefore.elements,
+                    { x, y, textPosCorrection } = circleBefore;
 
                 group
                     .raise();
@@ -34738,8 +34734,8 @@ class VertexCircle {
 
             if(circleBefore){
 
-                let { circle, text } = circleBefore.elements;
-                let { x, y, textPosCorrection } = circleBefore;
+                let { circle, text } = circleBefore.elements,
+                    { x, y, textPosCorrection } = circleBefore;
 
                 circle
                     .classed("circle-active", false)
@@ -34810,8 +34806,8 @@ class AreaCircle {
         this.elements.circle = this.elements.group.append("circle");
         this.elements.text   = this.elements.group.append("text");
 
-        let { x, y, r, id, elements} = this;
-        let { group, circle, text } = elements;
+        let { x, y, r, id, elements} = this,
+            { group, circle, text } = elements;
 
         group
             .attr("id", ["group-area-circle-", id].join(""));
@@ -34845,7 +34841,7 @@ class AreaCircle {
     updateTextValueAndPos(){
 
         let { r, elements, textPosCorrection } = this,
-            { group, text, circle } = elements,
+            { text, circle } = elements,
             cBBox = circle.node(0).getBBox(),
             textPos = {
                 x : ((textPosCorrection.x + cBBox.x) + (cBBox.width / 2)),
@@ -34896,8 +34892,8 @@ class CenterCircle {
         this.elements.circle = this.elements.group.append("circle");
         this.elements.text   = this.elements.group.append("text");
 
-        let { x, y, r, id, elements, textPosCorrection } = this;
-        let { group, circle, text } = elements;
+        let { x, y, r, id, elements, textPosCorrection } = this,
+            { group, circle, text } = elements;
 
         group
             .attr("id", ["center-circle-",this.id].join(""));
