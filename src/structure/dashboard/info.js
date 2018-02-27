@@ -14,13 +14,15 @@ const DashboardInfo = (() => {
     function updateParallelogramAreaDivText(base, height, area){
         let jqParallelogramAreaSpan = $(jqParallelogramAreaSpanSelector);
         jqParallelogramAreaSpan.text([
-            parseInt(base, 10), " x ", parseInt(height, 10), " = ", parseInt(area, 10)
+            "B ", parseInt(base, 10), " * H ", parseInt(height, 10), " = ", parseInt(area, 10)
         ].join(""));
     }
 
-    function updateCircleRadiusDivText(radius){
+    function updateCircleRadiusDivText(radius, area){
         let jqCircleRadiusSpan = $(jqCircleRadiusSpanSelector);
-        jqCircleRadiusSpan.text(parseInt(radius, 10));
+        jqCircleRadiusSpan.text([
+            "(" , parseInt(area, 10), " / π	) = R ", parseInt(radius, 10)
+        ].join(""));
     }
 
     function updateCenterDivText(x, y){
