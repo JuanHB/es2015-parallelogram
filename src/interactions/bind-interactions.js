@@ -107,10 +107,10 @@ const bindInteractions = () => {
     }
 
     function doAreaCircleCreation(){
-        let {x, y, r} = calcAreaCircleCoordinates(),
+        let {x, y, r, area} = calcAreaCircleCoordinates(),
             areaCircle = new AreaCircle(x, y, r, d3MainSvgElem);
         State.areaCircle.push(areaCircle);
-        dashboardInfo.updateCircleRadiusDivText(r);
+        dashboardInfo.updateCircleRadiusDivText(r, area);
     }
 
     function calcAreaCircleCoordinates(){
@@ -121,7 +121,7 @@ const bindInteractions = () => {
             x = pathsGroupBBox.x + (pathsGroupBBox.width / 2),
             y = pathsGroupBBox.y + (pathsGroupBBox.height / 2);
 
-        return { x, y, r }
+        return { x, y, r, area : parallelogramArea }
     }
 
     function doCenterCircleCreation(cx, cy){
@@ -165,12 +165,12 @@ const bindInteractions = () => {
 
     function updateAreaCircle(){
 
-        let {x, y, r} = calcAreaCircleCoordinates();
+        let {x, y, r, area} = calcAreaCircleCoordinates();
         const areaCircle = State.areaCircle[0];
 
         areaCircle.updateCircleCoordinates(x, y, r);
         areaCircle.updateTextValueAndPos();
-        dashboardInfo.updateCircleRadiusDivText(r);
+        dashboardInfo.updateCircleRadiusDivText(r, area);
 
     }
 
