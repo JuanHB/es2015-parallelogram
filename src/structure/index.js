@@ -1,7 +1,7 @@
-import updateMainSvgHeight from './dashboard/update-main-svg-height';
 import bindTools from './tools';
+import bindDashboard from './dashboard';
 
 export default () => {
-    updateMainSvgHeight();
     bindTools();
-}
+    bindDashboard();
+};

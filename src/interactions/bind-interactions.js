@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import { VertexCircle, VertexPath, AreaCircle, CenterCircle } from '../elements';
 import State from '../state';
 import math from '../utils/math';
+import dashboardInfo from '../structure/dashboard/info';
 
 const bindInteractions = () => {
 
@@ -11,34 +12,40 @@ const bindInteractions = () => {
 
     function createVertexCircleOnClick() {
 
-        const circles = State.circles;
+        let circles = State.circles;
         let target = d3.select(d3.event.target);
 
         if( target.attr('id') === 'main-svg' && circles.length < 3){
 
             doVertexCircleCreation();
 
+            let vertex = {
+                a : circles[0],
+                b : circles[1],
+                c : circles[2],
+                d : null
+            };
+
             if(circles.length === 3){
 
-                let vertexA = circles[0],
-                    vertexB = circles[1],
-                    vertexC = circles[2];
+                let {a, b, c} = vertex;
+                let oppositeSumX = a.x + c.x,
+                    oppositeSumY = a.y + c.y;
 
-                let oppositeSumX = vertexA.x + vertexC.x,
-                    oppositeSumY = vertexA.y + vertexC.y;
-
-                let vertexD = {
-                    x : oppositeSumX - vertexB.x,
-                    y : oppositeSumY - vertexB.y
+                vertex.d = {
+                    x : oppositeSumX - b.x,
+                    y : oppositeSumY - b.y
                 };
 
-                doVertexCircleCreation(vertexD.x, vertexD.y);
+                doVertexCircleCreation(vertex.d.x, vertex.d.y);
                 doAreaCircleCreation();
 
                 let pCenter = math.getParallelogramCenter();
                 doCenterCircleCreation(pCenter.x, pCenter.y);
 
             }
+
+            updateDashboardInfo();
         }
 
         function doVertexCircleCreation(cx, cy){
@@ -103,16 +110,7 @@ const bindInteractions = () => {
         let {x, y, r} = calcAreaCircleCoordinates(),
             areaCircle = new AreaCircle(x, y, r, d3MainSvgElem);
         State.areaCircle.push(areaCircle);
-    }
-
-    function updateAreaCircle(){
-
-        let {x, y, r} = calcAreaCircleCoordinates();
-        const areaCircle = State.areaCircle[0];
-
-        areaCircle.updateCircleCoordinates(x, y, r);
-        areaCircle.updateTextValueAndPos();
-
+        dashboardInfo.updateCircleRadiusDivText(r);
     }
 
     function calcAreaCircleCoordinates(){
@@ -129,6 +127,31 @@ const bindInteractions = () => {
     function doCenterCircleCreation(cx, cy){
         let centerCircle = new CenterCircle(cx, cy, 3, d3MainSvgElem);
         State.centerCircle.push(centerCircle);
+        dashboardInfo.updateCenterDivText(cx, cy);
+    }
+
+    function getParallelogramArea() {
+        let circles = State.circles,
+            sortedByY = [...circles]
+                .sort((a, b) => {
+                    if(a.y < b.y) return -1;
+                    if(a.y > b.y) return 1;
+                    return 0;
+                });
+
+        const getDist = (p1, p2) => {
+            return Math.hypot(p2.x - p1.x, p2.y - p1.y)
+        };
+
+        let basePoints = [ sortedByY[2], sortedByY[3] ],
+            heightPoints = [ sortedByY[0], sortedByY[2] ],
+            base = getDist(basePoints[0], basePoints[1]),
+            height = getDist(heightPoints[0], heightPoints[1]),
+            area = base * height;
+
+        dashboardInfo.updateParallelogramAreaDivText(base, height, area);
+
+        return area;
     }
 
     function updateCenterCircle(){
@@ -137,27 +160,18 @@ const bindInteractions = () => {
 
         centerCircle.updateTextCoordinates(x, y);
         centerCircle.updateCircleCoordinates(x, y);
+        dashboardInfo.updateCenterDivText(x, y);
     }
 
-    function getParallelogramArea() {
-        let circles = State.circles,
-            sortedByY = circles
-                .sort((a, b) => {
-                    if(a.y < b.y) return -1;
-                    if(a.y > b.y) return 1;
-                    return 0;
-                });
+    function updateAreaCircle(){
 
-        let getDist = (p1, p2) => {
-            return Math.hypot(p2.x - p1.x, p2.y - p1.y)
-        };
+        let {x, y, r} = calcAreaCircleCoordinates();
+        const areaCircle = State.areaCircle[0];
 
-        let basePoints = [ sortedByY[2], sortedByY[3] ],
-            heightPoints = [ sortedByY[0], sortedByY[2] ],
-            base = getDist(basePoints[0], basePoints[1]),
-            height = getDist(heightPoints[0], heightPoints[1]);
+        areaCircle.updateCircleCoordinates(x, y, r);
+        areaCircle.updateTextValueAndPos();
+        dashboardInfo.updateCircleRadiusDivText(r);
 
-        return base * height;
     }
 
     function updatePathCoordsOnCircleDrag(){
@@ -176,8 +190,26 @@ const bindInteractions = () => {
 
         if(State.areaCircle.length){
             updateAreaCircle();
-            updateCenterCircle()
+            updateCenterCircle();
         }
+
+        updateDashboardInfo();
+    }
+
+    function updateDashboardInfo(){
+
+        let circles = State.circles;
+        let vertexCircles = ['a', 'b', 'c', 'd'].map((letter, i) => {
+            return { letter, vertex: circles[i] };
+        });
+
+        vertexCircles.forEach((vertexCircle) => {
+            let { letter, vertex } = vertexCircle;
+            if(vertex) {
+                let { x, y } = vertex;
+                dashboardInfo.updateVertexDivText(letter, x, y);
+            }
+        });
     }
 
     d3MainSvgElem

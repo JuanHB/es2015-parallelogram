@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import State from '../state';
 import forOwn from 'lodash/forOwn';
+import dashboardInfo from '../structure/dashboard/info';
 
 const bindActions = () => {
 
@@ -21,6 +22,8 @@ const bindActions = () => {
         State.centerCircle.forEach(removeElement);
 
         State.resetState();
+
+        dashboardInfo.resetVertexDivText();
 
     }
 };
