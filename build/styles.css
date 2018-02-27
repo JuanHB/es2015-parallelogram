@@ -6,11 +6,13 @@ div.info {
 
 div.vertex {
   border: 1px solid #686868;
-  margin: 0 2px 0 2px; }
+  margin: 0 2px 0 2px;
+  padding-bottom: 3px; }
 
 div.area-info {
   border: 1px solid #686868;
-  margin: 4px 2px 0 2px; }
+  margin: 4px 2px 0 2px;
+  padding-bottom: 3px; }
 
 .circle, .circle-active {
   fill: #FF0000;

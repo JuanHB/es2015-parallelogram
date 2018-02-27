@@ -5282,13 +5282,15 @@ const DashboardInfo = (() => {
     function updateParallelogramAreaDivText(base, height, area){
         let jqParallelogramAreaSpan = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(jqParallelogramAreaSpanSelector);
         jqParallelogramAreaSpan.text([
-            parseInt(base, 10), " x ", parseInt(height, 10), " = ", parseInt(area, 10)
+            "B ", parseInt(base, 10), " * H ", parseInt(height, 10), " = ", parseInt(area, 10)
         ].join(""));
     }
 
-    function updateCircleRadiusDivText(radius){
+    function updateCircleRadiusDivText(radius, area){
         let jqCircleRadiusSpan = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(jqCircleRadiusSpanSelector);
-        jqCircleRadiusSpan.text(parseInt(radius, 10));
+        jqCircleRadiusSpan.text([
+            "(" , parseInt(area, 10), " / π	) = R ", parseInt(radius, 10)
+        ].join(""));
     }
 
     function updateCenterDivText(x, y){
@@ -21447,10 +21449,10 @@ const bindInteractions = () => {
     }
 
     function doAreaCircleCreation(){
-        let {x, y, r} = calcAreaCircleCoordinates(),
+        let {x, y, r, area} = calcAreaCircleCoordinates(),
             areaCircle = new __WEBPACK_IMPORTED_MODULE_1__elements__["a" /* AreaCircle */](x, y, r, d3MainSvgElem);
         __WEBPACK_IMPORTED_MODULE_2__state__["a" /* default */].areaCircle.push(areaCircle);
-        __WEBPACK_IMPORTED_MODULE_4__structure_dashboard_info__["a" /* default */].updateCircleRadiusDivText(r);
+        __WEBPACK_IMPORTED_MODULE_4__structure_dashboard_info__["a" /* default */].updateCircleRadiusDivText(r, area);
     }
 
     function calcAreaCircleCoordinates(){
@@ -21461,7 +21463,7 @@ const bindInteractions = () => {
             x = pathsGroupBBox.x + (pathsGroupBBox.width / 2),
             y = pathsGroupBBox.y + (pathsGroupBBox.height / 2);
 
-        return { x, y, r }
+        return { x, y, r, area : parallelogramArea }
     }
 
     function doCenterCircleCreation(cx, cy){
@@ -21505,12 +21507,12 @@ const bindInteractions = () => {
 
     function updateAreaCircle(){
 
-        let {x, y, r} = calcAreaCircleCoordinates();
+        let {x, y, r, area} = calcAreaCircleCoordinates();
         const areaCircle = __WEBPACK_IMPORTED_MODULE_2__state__["a" /* default */].areaCircle[0];
 
         areaCircle.updateCircleCoordinates(x, y, r);
         areaCircle.updateTextValueAndPos();
-        __WEBPACK_IMPORTED_MODULE_4__structure_dashboard_info__["a" /* default */].updateCircleRadiusDivText(r);
+        __WEBPACK_IMPORTED_MODULE_4__structure_dashboard_info__["a" /* default */].updateCircleRadiusDivText(r, area);
 
     }
 
