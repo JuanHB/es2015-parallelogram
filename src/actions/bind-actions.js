@@ -23,7 +23,7 @@ const bindActions = () => {
 
         State.resetState();
 
-        dashboardInfo.resetVertexDivText();
+        dashboardInfo.resetDashboardInfoText();
 
     }
 };
