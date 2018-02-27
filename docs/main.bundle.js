@@ -5270,37 +5270,51 @@ class ElementsUtils {
 
 const DashboardInfo = (() => {
 
+    let jqCenterSpanSelector = 'span.shapes-center',
+        jqCircleRadiusSpanSelector = 'span.area-circle-radius',
+        jqParallelogramAreaSpanSelector = 'span.parallelogram-area';
+
     function updateVertexDivText(vertex, x, y){
         let jqVertexSpan = __WEBPACK_IMPORTED_MODULE_0_jquery___default()("span.vertex-" + vertex);
         jqVertexSpan.text(["x ", x, " | y ", y].join(""));
     }
 
     function updateParallelogramAreaDivText(base, height, area){
-        let jqParallelogramAreaSpan = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('span.parallelogram-area');
+        let jqParallelogramAreaSpan = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(jqParallelogramAreaSpanSelector);
         jqParallelogramAreaSpan.text([
-            parseInt(base, 10), " x ", parseInt(height, 10), " = ", parseInt(area, 10)
+            "B ", parseInt(base, 10), " * H ", parseInt(height, 10), " = ", parseInt(area, 10)
         ].join(""));
     }
 
-    function updateCircleRadiusDivText(radius){
-        let jqCircleRadiusSpan = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('span.area-circle-radius');
-        jqCircleRadiusSpan.text(parseInt(radius, 10));
+    function updateCircleRadiusDivText(radius, area){
+        let jqCircleRadiusSpan = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(jqCircleRadiusSpanSelector);
+        jqCircleRadiusSpan.text([
+            "(" , parseInt(area, 10), " / π	) = R ", parseInt(radius, 10)
+        ].join(""));
     }
 
     function updateCenterDivText(x, y){
-        let jqCenterSpan = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('span.shapes-center');
+        let jqCenterSpan = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(jqCenterSpanSelector);
         jqCenterSpan.text(["x ", parseInt(x, 10), " | y ", parseInt(y, 10)].join(""));
     }
 
-    function resetVertexDivText(){
-        let jqVertexSpan = __WEBPACK_IMPORTED_MODULE_0_jquery___default()("span[class*='vertex']");
-        jqVertexSpan.text("x 0 | y 0");
+    function resetDashboardInfoText(){
+
+        let jqVertexSpan = __WEBPACK_IMPORTED_MODULE_0_jquery___default()("span[class*='vertex']"),
+            jqCenterSpan = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(jqCenterSpanSelector),
+            jqCircleRadiusSpan = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(jqCircleRadiusSpanSelector),
+            jqParallelogramAreaSpan = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(jqParallelogramAreaSpanSelector);
+
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(jqCenterSpan).text("x 0 | y 0");
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(jqVertexSpan).text("x 0 | y 0");
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(jqCircleRadiusSpan).text("0");
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(jqParallelogramAreaSpan).text("0");
     }
 
     return {
-        resetVertexDivText,
         updateVertexDivText,
         updateCenterDivText,
+        resetDashboardInfoText,
         updateCircleRadiusDivText,
         updateParallelogramAreaDivText
     }
@@ -20376,7 +20390,7 @@ const bindActions = () => {
 
         __WEBPACK_IMPORTED_MODULE_1__state__["a" /* default */].resetState();
 
-        __WEBPACK_IMPORTED_MODULE_3__structure_dashboard_info__["a" /* default */].resetVertexDivText();
+        __WEBPACK_IMPORTED_MODULE_3__structure_dashboard_info__["a" /* default */].resetDashboardInfoText();
 
     }
 };
@@ -21435,10 +21449,10 @@ const bindInteractions = () => {
     }
 
     function doAreaCircleCreation(){
-        let {x, y, r} = calcAreaCircleCoordinates(),
+        let {x, y, r, area} = calcAreaCircleCoordinates(),
             areaCircle = new __WEBPACK_IMPORTED_MODULE_1__elements__["a" /* AreaCircle */](x, y, r, d3MainSvgElem);
         __WEBPACK_IMPORTED_MODULE_2__state__["a" /* default */].areaCircle.push(areaCircle);
-        __WEBPACK_IMPORTED_MODULE_4__structure_dashboard_info__["a" /* default */].updateCircleRadiusDivText(r);
+        __WEBPACK_IMPORTED_MODULE_4__structure_dashboard_info__["a" /* default */].updateCircleRadiusDivText(r, area);
     }
 
     function calcAreaCircleCoordinates(){
@@ -21449,7 +21463,7 @@ const bindInteractions = () => {
             x = pathsGroupBBox.x + (pathsGroupBBox.width / 2),
             y = pathsGroupBBox.y + (pathsGroupBBox.height / 2);
 
-        return { x, y, r }
+        return { x, y, r, area : parallelogramArea }
     }
 
     function doCenterCircleCreation(cx, cy){
@@ -21493,12 +21507,12 @@ const bindInteractions = () => {
 
     function updateAreaCircle(){
 
-        let {x, y, r} = calcAreaCircleCoordinates();
+        let {x, y, r, area} = calcAreaCircleCoordinates();
         const areaCircle = __WEBPACK_IMPORTED_MODULE_2__state__["a" /* default */].areaCircle[0];
 
         areaCircle.updateCircleCoordinates(x, y, r);
         areaCircle.updateTextValueAndPos();
-        __WEBPACK_IMPORTED_MODULE_4__structure_dashboard_info__["a" /* default */].updateCircleRadiusDivText(r);
+        __WEBPACK_IMPORTED_MODULE_4__structure_dashboard_info__["a" /* default */].updateCircleRadiusDivText(r, area);
 
     }
 
