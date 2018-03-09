@@ -59,9 +59,6 @@ class VertexCircle {
 
             let { x, y, textPosCorrection, circleBefore } = this;
 
-            group
-                .raise();
-
             circle
                 .classed( "circle-active", true )
                 .attr("cx", 0)
