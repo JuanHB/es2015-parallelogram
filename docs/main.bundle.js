@@ -2670,7 +2670,7 @@ const DashboardInfo = (() => {
     function updateCircleRadiusDivText(radius, area){
         let jqCircleRadiusSpan = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(jqCircleRadiusSpanSelector);
         jqCircleRadiusSpan.text([
-            "(" , parseInt(area, 10), " / π	) = R ", parseInt(radius, 10)
+            "(√" , parseInt(area, 10), " / π	) = R ", parseInt(radius, 10)
         ].join(""));
     }
 
@@ -34770,9 +34770,6 @@ class VertexCircle {
         let dragStart = () => {
 
             let { x, y, textPosCorrection, circleBefore } = this;
-
-            group
-                .raise();
 
             circle
                 .classed( "circle-active", true )
