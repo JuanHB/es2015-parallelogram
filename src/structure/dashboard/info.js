@@ -21,7 +21,7 @@ const DashboardInfo = (() => {
     function updateCircleRadiusDivText(radius, area){
         let jqCircleRadiusSpan = $(jqCircleRadiusSpanSelector);
         jqCircleRadiusSpan.text([
-            "(√" , parseInt(area, 10), " / π	) = R ", parseInt(radius, 10)
+            "√( " , parseInt(area, 10), " / π ) = R ", parseInt(radius, 10)
         ].join(""));
     }
 
