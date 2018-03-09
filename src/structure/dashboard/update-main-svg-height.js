@@ -1,5 +1,5 @@
 import $ from 'jquery';
-
+import debounce from 'lodash/debounce';
 const updateMainSvgHeight = () => {
 
     let jqWindow = $(window),
@@ -14,7 +14,7 @@ const updateMainSvgHeight = () => {
     doUpdate();
 
     jqWindow
-        .resize(doUpdate);
+        .resize(debounce(doUpdate, 300));
 
 };
 
