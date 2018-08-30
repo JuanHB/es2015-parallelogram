@@ -1,4 +1,2 @@
 import bindInteractions from './bind-interactions';
-export default () => {
-    bindInteractions();
-}
+export default () => bindInteractions();
