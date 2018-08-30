@@ -1,53 +1,53 @@
-let path = require('path');
-let webpack = require('webpack');
-let ExtractTextPlugin = require('extract-text-webpack-plugin');
-
-const extractSass = new ExtractTextPlugin({
-    filename: 'styles.min.css',
-});
-
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const HtmlWebPackPlugin = require("html-webpack-plugin");
+const CopyWebPackPlugin = require("copy-webpack-plugin");
 module.exports = {
-    entry: './src/main.js',
-    output: {
-        path: path.resolve(__dirname, 'build'),
-        filename: 'main.bundle.js'
-    },
-    module: {
-        loaders: [
-            {
-                test: /\.js$/,
-                loader: 'babel-loader',
-                query: {
-                    presets: ['env']
-                }
-            }
-        ],
-        rules: [
-            {
-                test: /(\.scss|\.css)$/,
-                use: extractSass.extract({
-                    use: [
-                        { loader: "css-loader", options: { sourceMap: true, minimize: true }},
-                        { loader: "sass-loader", options: { sourceMap: true, minimize: true }}
-                    ],
-                    fallback: "style-loader"
-                }),
-            },
-            {
-                test: require.resolve('jquery'),
-                use: [
-                    { loader: 'expose-loader', options: 'jQuery' },
-                    { loader: 'expose-loader', options: '$' }
-                ]
-            },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader"
+        }
+      },
+      {
+        test: /(\.scss|\.css)$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          "sass-loader"
         ]
-    },
-    plugins: [
-        extractSass,
-    ],
-    stats: {
-        colors: true
-    },
-    devtool: 'source-map',
-    watch: true
+      },
+      {
+        test: /\.html$/,
+        use: [
+          {
+            loader: "html-loader",
+            options: { minimize: true }
+          }
+        ]
+      },
+      {
+        test: require.resolve('jquery'),
+        use: [
+          { loader: 'expose-loader', options: 'jQuery' },
+          { loader: 'expose-loader', options: '$' }
+        ]
+      },
+    ]
+  },
+  plugins: [
+    new HtmlWebPackPlugin({
+      template: "./src/index.html",
+      filename: "./index.html"
+    }),
+    new MiniCssExtractPlugin({
+      filename: "[name].css",
+      chunkFilename: "[id].css"
+    }),
+    new CopyWebPackPlugin([
+      { from: './dist', to: '../docs' }
+    ]),
+  ]
 };

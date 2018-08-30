@@ -1,34 +1,42 @@
 {
-  "name": "ES2015+ Parallelogram",
+  "name": "es6-Parallelogram",
   "version": "1.0.0",
   "description": "Demo app of parallelogram interactions, made with ES2015+, d3.js and SVG",
   "main": "index.js",
   "repository": "https://github.com/JuanHB/es2015-parallelogram.git",
   "scripts": {
-    "start": "http-server",
-    "webpack": "webpack"
+    "start": "webpack-dev-server --mode development --open",
+    "build": "webpack --mode production",
+    "dev": "webpack --mode development"
   },
   "keywords": [],
   "author": "Juan H. Biscaia",
   "license": "MIT",
   "dependencies": {
+    "ajv": "^6.5.3",
     "d3": "^4.12.2",
     "jquery": "^3.2.1",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.10",
+    "popper.js": "^1.14.4"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.2",
-    "babel-preset-env": "^1.6.1",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-preset-env": "^1.7.0",
     "bootstrap": "^4.0.0-beta",
-    "css-loader": "^0.28.8",
+    "copy-webpack-plugin": "^4.5.2",
+    "css-loader": "^0.28.11",
     "expose-loader": "^0.7.4",
-    "extract-text-webpack-plugin": "^3.0.2",
+    "html-loader": "^0.5.5",
+    "html-webpack-plugin": "^3.2.0",
     "http-server": "^0.10.0",
-    "node-sass": "^4.7.2",
-    "sass-loader": "^6.0.6",
+    "mini-css-extract-plugin": "^0.4.2",
+    "node-sass": "^4.9.3",
+    "sass-loader": "^6.0.7",
     "style-loader": "^0.19.1",
-    "webpack": "^3.10.0"
+    "webpack": "^4.17.1",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.7"
   }
 }
