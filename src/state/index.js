@@ -10,7 +10,7 @@ const State = {
     newCircle: null,
     lastCircle: null,
 
-    resetState: function(){
+    resetState: () => {
         this.paths = [];
         this.circles = [];
         this.newPath = null;
