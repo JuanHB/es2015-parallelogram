@@ -1,4 +1,3 @@
-import * as d3 from 'd3';
 import ElementsUtils from '../utils/elements'
 
 class CenterCircle {
